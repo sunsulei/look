@@ -11,10 +11,10 @@ import java.util.Enumeration;
 public class StringUtil {
 
     private static final String ENCODING = "UTF-8";
-    //    private static final String URL = "http://look.sunsulei.com/";
-//    private static final String DOMAIN = "look.sunsulei.com";
-    private static final String URL = "http://127.0.0.1:8888/";
-    private static final String DOMAIN = "127.0.0.1:8888";
+        private static final String URL = "http://look.sunsulei.com/";
+    private static final String DOMAIN = "look.sunsulei.com";
+//    private static final String URL = "http://127.0.0.1:8888/";
+//    private static final String DOMAIN = "127.0.0.1:8888";
     private static final String JUJI123URL = "http://juji123.com";
     private static final String JUJI123DOMAIN = "juji123.com";
     private static final String JUJI123API = "http://api.juji123.com";
