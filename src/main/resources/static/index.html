@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>看电影</title>
+</head>
+<style>
+    html{
+        height: 100%;
+        width: 100%;
+    }
+    body{
+        height: 100%;
+        width: 100%;
+    }
+    .dv{
+        height: 100%;
+        width: 100%;
+    }
+</style>
+<body>
+
+
+<!--<div id="juji123"></div>-->
+
+
+<div class="dv" height="100%" width="100%">
+    <iframe src='' frameBorder=0 scrolling=yes height='100%' width='100%'>
+
+    </iframe>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/3.2.0/jquery.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("html").html().replace("juji123.com",DOMAIN);
+    })
+
+</script>
+</body>
+</html>
