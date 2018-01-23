@@ -47,7 +47,8 @@ public class IndexController {
             if (!StringUtils.isEmpty(v)) {
                 next = Integer.parseInt(v) + 1;
             }
-            String location = request.getRequestURL() + "?v=" + next;
+            String location = path + "?v=" + next;
+
             StringBuffer buffer = new StringBuffer();
             buffer.append("<meta name='referrer' content='never'> <!-- 没写错 -->\n");
             buffer.append("<center style='margin-top:30px' height='100%' width='100%'>").append("\n");
