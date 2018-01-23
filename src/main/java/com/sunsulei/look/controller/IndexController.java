@@ -1,6 +1,7 @@
 package com.sunsulei.look.controller;
 
 
+import com.sunsulei.look.PropUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -24,23 +25,14 @@ public class IndexController {
     private String v7 = "http://api.nepian.com/ckparse/?url=";
     private String v8 = "http://aikan-tv.com/?url=";
 
-    private String defaultAPI = v1;
 
-    private static final String ENCODING = "UTF-8";
-    //        private static final String URL = "http://look.sunsulei.com/";
-//    private static final String DOMAIN = "look.sunsulei.com";
-    private static final String URL = "http://127.0.0.1:8888/";
-    private static final String DOMAIN = "127.0.0.1:8888";
-    private static final String JUJI123URL = "http://juji123.com";
-    private static final String JUJI123DOMAIN = "juji123.com";
-    private static final String JUJI123API = "http://api.juji123.com";
 
 
     @RequestMapping(value = {"**/youku", "**/tudou", "**/iqiyi", "**/qq", "**/soho", "**/tudou", "**/imgo"})
     public String play(HttpServletRequest request, HttpServletResponse response) {
         try {
             String path = request.getServletPath();
-            String html = StringUtil.url2String(JUJI123URL, path);
+            String html = StringUtil.url2String(PropUtil.JUJI123_HTTP(), path);
             Element explaylink = Jsoup.parse(html).getElementById("explaylink");
             if (explaylink == null) {
                 return null;
@@ -48,37 +40,9 @@ public class IndexController {
             String playUrl = explaylink.attr("href");
 
             String v = request.getParameter("v");
-            if (StringUtils.isNotBlank(v)) {
-                switch (v) {
-                    case "1":
-                        defaultAPI = v1;
-                        break;
-                    case "2":
-                        defaultAPI = v2;
-                        break;
-                    case "3":
-                        defaultAPI = v3;
-                        break;
-                    case "4":
-                        defaultAPI = v4;
-                        break;
-                    case "5":
-                        defaultAPI = v5;
-                        break;
-                    case "6":
-                        defaultAPI = v6;
-                        break;
-                    case "7":
-                        defaultAPI = v7;
-                        break;
-                    case "8":
-                        defaultAPI = v8;
-                        break;
-                    default:
-                        break;
-                }
-            }
+            String apiUrl = StringUtil.getApiUrl(v);
 
+            //判断页面点击刷新的时候用哪个apiUrl
             int next = 1;
             if (!StringUtils.isEmpty(v)) {
                 next = Integer.parseInt(v) + 1;
@@ -90,7 +54,7 @@ public class IndexController {
             buffer.append("<div>").append("\n");
             buffer.append("<p onclick='refresh()' style='color:red;font-size: 15px;'>无法播放点击此处</p>").append("\n");
             buffer.append("</div>").append("\n");
-            buffer.append("<iframe src='" + defaultAPI + playUrl + "' frameBorder=0 scrolling=yes height='80%' width='80%'></iframe>").append("\n");
+            buffer.append("<iframe src='" + apiUrl + playUrl + "' frameBorder=0 scrolling=yes height='80%' width='80%'></iframe>").append("\n");
             buffer.append("</center>").append("\n");
             buffer.append("<script type='text/javascript'>").append("\n");
             buffer.append("   function refresh(){").append("\n");
@@ -120,21 +84,21 @@ public class IndexController {
         try {
             if (StringUtil.isStaticSource(path)) {
                 //如果是静态资源，写字节数组返回前台
-                writeBytes(response, StringUtil.url2bytes(JUJI123URL, path));
+                writeBytes(response, StringUtil.url2bytes(PropUtil.JUJI123_HTTP(), path));
             } else {
                 //特殊的几个方法走的是二级域名
                 if (path.contains("searchsuggestion.php") || path.contains("portal.php")) {
-                    String html = StringUtil.url2String(JUJI123API, path);
+                    String html = StringUtil.url2String(PropUtil.JUJI123_HTTP(), path);
                     html = StringUtil.replaceContent(html);
                     writeHtml(response, html);
                 } else if (path.contains("js")) {
                     //js里面可能包含了原域名，替换成自定义的域名
-                    String html = StringUtil.url2String(JUJI123URL, path);
+                    String html = StringUtil.url2String(PropUtil.JUJI123_HTTP(), path);
                     html = StringUtil.replaceContent(html);
                     writeHtml(response, html);
                 } else {
                     //正常页面
-                    String html = StringUtil.url2String(JUJI123URL, path);
+                    String html = StringUtil.url2String(PropUtil.JUJI123_HTTP(), path);
                     html = StringUtil.replaceContent(html);
                     writeHtmlAndContent(response, html, "text/html");
                 }
@@ -160,7 +124,7 @@ public class IndexController {
      * @throws IOException
      */
     private void writeBytes(HttpServletResponse response, byte[] bs) throws IOException {
-        response.setCharacterEncoding(ENCODING);
+        response.setCharacterEncoding(PropUtil.ENCODING());
         response.getOutputStream().write(bs);
     }
 
@@ -172,7 +136,7 @@ public class IndexController {
      * @throws IOException
      */
     private void writeHtml(HttpServletResponse response, String html) throws IOException {
-        response.setCharacterEncoding(ENCODING);
+        response.setCharacterEncoding(PropUtil.ENCODING());
         response.getWriter().write(html);
     }
 
@@ -185,7 +149,7 @@ public class IndexController {
      */
     private void writeHtmlAndContent(HttpServletResponse response, String html, String contentType) throws IOException {
         response.setContentType(contentType);
-        response.setCharacterEncoding(ENCODING);
+        response.setCharacterEncoding(PropUtil.ENCODING());
         response.getWriter().write(html);
     }
 

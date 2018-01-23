@@ -1,5 +1,6 @@
 package com.sunsulei.look.controller;
 
+import com.sunsulei.look.PropUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,16 +11,6 @@ import java.util.Enumeration;
 
 public class StringUtil {
 
-    private static final String ENCODING = "UTF-8";
-    //        private static final String URL = "http://look.sunsulei.com/";
-//    private static final String DOMAIN = "look.sunsulei.com";
-    private static final String URL = "http://127.0.0.1:8888/";
-    private static final String DOMAIN = "127.0.0.1:8888";
-    private static final String JUJI123URL = "http://juji123.com";
-    private static final String JUJI123DOMAIN = "juji123.com";
-    private static final String JUJI123API = "http://api.juji123.com";
-
-
     /**
      * 替换html中的域名为自己的域名
      *
@@ -28,9 +19,9 @@ public class StringUtil {
      */
     public static String replaceContent(String html) {
 
-        html = html.replaceAll("api\\.juji123\\.com", DOMAIN);
-        html = html.replaceAll("meiju\\.juji123\\.com", DOMAIN);
-        html = html.replaceAll("juji123\\.com", DOMAIN);
+        html = html.replaceAll("api\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
+        html = html.replaceAll("meiju\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
+        html = html.replaceAll("juji123\\.com", PropUtil.LOCAL_NO_HTTP());
         return html;
     }
 
@@ -96,4 +87,14 @@ public class StringUtil {
         return pathBuilder.toString();
     }
 
+    public static String getApiUrl(String v) {
+        String[] apis = PropUtil.API_URL();
+        if (StringUtils.isEmpty(v)) {
+            return apis[0];
+        }
+        if (Integer.parseInt(v) >= apis.length) {
+            return apis[apis.length - 1];
+        }
+        return apis[Integer.parseInt(v)];
+    }
 }
