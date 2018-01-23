@@ -11,7 +11,7 @@ import java.util.Enumeration;
 public class StringUtil {
 
     private static final String ENCODING = "UTF-8";
-//        private static final String URL = "http://look.sunsulei.com/";
+    //        private static final String URL = "http://look.sunsulei.com/";
 //    private static final String DOMAIN = "look.sunsulei.com";
     private static final String URL = "http://127.0.0.1:8888/";
     private static final String DOMAIN = "127.0.0.1:8888";
@@ -58,6 +58,7 @@ public class StringUtil {
      * @throws IOException
      */
     public static byte[] url2bytes(String baseUri, String url) throws IOException {
+//        return url2String(baseUri, url).getBytes();
         return IOUtils.toByteArray(new URL(baseUri + url).openStream());
     }
 

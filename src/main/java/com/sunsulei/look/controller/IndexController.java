@@ -15,7 +15,7 @@ import java.io.IOException;
 @Controller
 public class IndexController {
 
-    private String v1 = "https://api.flvsp.com/?url=";
+    private String v1 = "http://api.baiyug.cn/vip/index.php?url=";
     private String v2 = "http://vip.jlsprh.com/index.php?url=";
     private String v3 = "http://api.47ks.com/webcloud/?v=";
     private String v4 = "http://api.xfsub.com/index.php?url=";
@@ -27,7 +27,7 @@ public class IndexController {
     private String defaultAPI = v1;
 
     private static final String ENCODING = "UTF-8";
-//        private static final String URL = "http://look.sunsulei.com/";
+    //        private static final String URL = "http://look.sunsulei.com/";
 //    private static final String DOMAIN = "look.sunsulei.com";
     private static final String URL = "http://127.0.0.1:8888/";
     private static final String DOMAIN = "127.0.0.1:8888";
@@ -36,7 +36,7 @@ public class IndexController {
     private static final String JUJI123API = "http://api.juji123.com";
 
 
-    @RequestMapping(value = {"**/youku", "**/iqiyi", "**/qq", "**/soho", "**/tudou", "**/imgo"})
+    @RequestMapping(value = {"**/youku", "**/tudou", "**/iqiyi", "**/qq", "**/soho", "**/tudou", "**/imgo"})
     public String play(HttpServletRequest request, HttpServletResponse response) {
         try {
             String path = request.getServletPath();
@@ -79,10 +79,27 @@ public class IndexController {
                 }
             }
 
+            int next = 1;
+            if (!StringUtils.isEmpty(v)) {
+                next = Integer.parseInt(v) + 1;
+            }
+            String location = request.getRequestURL() + "?v=" + next;
             StringBuffer buffer = new StringBuffer();
-            buffer.append("<div></div>");
-            buffer.append("<iframe src='" + defaultAPI + playUrl + "' frameBorder=0 scrolling=yes height='100%' width='100%'></iframe>");
-            writeHtml(response, buffer.toString());
+            buffer.append("<meta name='referrer' content='never'> <!-- 没写错 -->\n");
+            buffer.append("<center style='margin-top:30px' height='100%' width='100%'>").append("\n");
+            buffer.append("<div>").append("\n");
+            buffer.append("<p onclick='refresh()' style='color:red;font-size: 15px;'>无法播放点击此处</p>").append("\n");
+            buffer.append("</div>").append("\n");
+            buffer.append("<iframe src='" + defaultAPI + playUrl + "' frameBorder=0 scrolling=yes height='80%' width='80%'></iframe>").append("\n");
+            buffer.append("</center>").append("\n");
+            buffer.append("<script type='text/javascript'>").append("\n");
+            buffer.append("   function refresh(){").append("\n");
+            buffer.append("       window.location.href='" + location + "'").append("\n");
+            buffer.append("   }").append("\n");
+            buffer.append("</script>").append("\n");
+//            buffer.append("</body>");
+//            buffer.append("</html>");
+            writeHtmlAndContent(response, buffer.toString(), "text/html");
         } catch (Exception e) {
             e.printStackTrace();
         }
