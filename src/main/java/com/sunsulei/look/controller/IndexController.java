@@ -16,26 +16,18 @@ import java.io.IOException;
 @Controller
 public class IndexController {
 
-    private String v1 = "http://api.baiyug.cn/vip/index.php?url=";
-    private String v2 = "http://vip.jlsprh.com/index.php?url=";
-    private String v3 = "http://api.47ks.com/webcloud/?v=";
-    private String v4 = "http://api.xfsub.com/index.php?url=";
-    private String v5 = "http://api.baiyug.cn/vip_vip2/baiyug.php?url=";
-    private String v6 = "http://jiexi.92fz.cn/player/vip.php?url=";
-    private String v7 = "http://api.nepian.com/ckparse/?url=";
-    private String v8 = "http://aikan-tv.com/?url=";
-
-
-
-
     @RequestMapping(value = {"**/youku", "**/tudou", "**/iqiyi", "**/qq", "**/soho", "**/tudou", "**/imgo"})
-    public String play(HttpServletRequest request, HttpServletResponse response) {
+    public void play(HttpServletRequest request, HttpServletResponse response) {
         try {
             String path = request.getServletPath();
+            if(StringUtil.isStaticSource(path)){
+                controller(request,response);
+                return;
+            }
             String html = StringUtil.url2String(PropUtil.JUJI123_HTTP(), path);
             Element explaylink = Jsoup.parse(html).getElementById("explaylink");
             if (explaylink == null) {
-                return null;
+                return;
             }
             String playUrl = explaylink.attr("href");
 
@@ -44,31 +36,27 @@ public class IndexController {
 
             //判断页面点击刷新的时候用哪个apiUrl
             int next = 1;
-            if (!StringUtils.isEmpty(v)) {
+            if (StringUtils.isNotEmpty(v)) {
                 next = Integer.parseInt(v) + 1;
             }
             String location = path + "?v=" + next;
 
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("<meta name='referrer' content='never'> <!-- 没写错 -->\n");
-            buffer.append("<center style='margin-top:30px' height='100%' width='100%'>").append("\n");
-            buffer.append("<div>").append("\n");
-            buffer.append("<p onclick='refresh()' style='color:red;font-size: 15px;'>无法播放点击此处</p>").append("\n");
-            buffer.append("</div>").append("\n");
-            buffer.append("<iframe src='" + apiUrl + playUrl + "' frameBorder=0 scrolling=yes height='80%' width='80%'></iframe>").append("\n");
-            buffer.append("</center>").append("\n");
-            buffer.append("<script type='text/javascript'>").append("\n");
-            buffer.append("   function refresh(){").append("\n");
-            buffer.append("       window.location.href='" + location + "'").append("\n");
-            buffer.append("   }").append("\n");
-            buffer.append("</script>").append("\n");
-//            buffer.append("</body>");
-//            buffer.append("</html>");
-            writeHtmlAndContent(response, buffer.toString(), "text/html");
+            String buffer = "<meta name='referrer' content='never'> <!-- 没写错 -->\n" +
+                    "<center style='margin-top:30px' height='100%' width='100%'>" + "\n" +
+                    "<div>" + "\n" +
+                    "<button onclick='refresh()' style='color:red;font-size: 15px;'>无法播放点击此处</button>" + "\n" +
+                    "</div>" + "\n" +
+                    "<iframe src='" + apiUrl + playUrl + "' frameBorder=0 scrolling=yes height='80%' width='80%'></iframe>" + "\n" +
+                    "</center>" + "\n" +
+                    "<script type='text/javascript'>" + "\n" +
+                    "   function refresh(){" + "\n" +
+                    "       window.location.href='" + location + "'" + "\n" +
+                    "   }" + "\n" +
+                    "</script>" + "\n";
+            writeHtmlAndContent(response, buffer, "text/html");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
     }
 
     /**
@@ -80,27 +68,27 @@ public class IndexController {
      * @throws Exception
      */
     @RequestMapping("**")
-    public String controller(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void controller(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String path = StringUtil.params(request);
         try {
             if (StringUtil.isStaticSource(path)) {
                 //如果是静态资源，写字节数组返回前台
                 writeBytes(response, StringUtil.url2bytes(PropUtil.JUJI123_HTTP(), path));
-            } else {
+            }else {
                 //特殊的几个方法走的是二级域名
                 if (path.contains("searchsuggestion.php") || path.contains("portal.php")) {
-                    String html = StringUtil.url2String(PropUtil.JUJI123_HTTP(), path);
-                    html = StringUtil.replaceContent(html);
+                    String html = StringUtil.url2String(PropUtil.JUJI123_API(), path);
+                    html = StringUtil.replace(html);
                     writeHtml(response, html);
                 } else if (path.contains("js")) {
                     //js里面可能包含了原域名，替换成自定义的域名
-                    String html = StringUtil.url2String(PropUtil.JUJI123_HTTP(), path);
-                    html = StringUtil.replaceContent(html);
-                    writeHtml(response, html);
+                    byte[] bytes = StringUtil.url2bytes(PropUtil.JUJI123_HTTP(), path);
+                    String replace = StringUtil.replace(new String(bytes));
+                    writeBytes(response, replace.getBytes());
                 } else {
                     //正常页面
                     String html = StringUtil.url2String(PropUtil.JUJI123_HTTP(), path);
-                    html = StringUtil.replaceContent(html);
+                    html = StringUtil.replaceHtml(html);
                     writeHtmlAndContent(response, html, "text/html");
                 }
 
@@ -113,7 +101,6 @@ public class IndexController {
                 System.out.println("异常没有处理，暂时不管他。");
             }
         }
-        return null;
     }
 
 

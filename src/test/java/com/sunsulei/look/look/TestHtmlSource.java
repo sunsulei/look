@@ -14,7 +14,7 @@ public class TestHtmlSource {
     @Test
     public void aaa() throws Exception {
 
-        String html = IOUtils.toString(new URL("http://juji123.com"));
+        String html = IOUtils.toString(new URL("http://juji123.com/dalu/chenglideyueguang/"));
         Document document = Jsoup.parse(html);
         for (Element aTag : document.getElementsByTag("a")) {
             String oldHref = aTag.attr("href");

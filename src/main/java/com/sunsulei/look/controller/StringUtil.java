@@ -3,6 +3,9 @@ package com.sunsulei.look.controller;
 import com.sunsulei.look.PropUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -17,12 +20,57 @@ public class StringUtil {
      * @param html
      * @return
      */
-    public static String replaceContent(String html) {
+    public static String replaceHtml(String html) {
 
-        html = html.replaceAll("api\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
-        html = html.replaceAll("meiju\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
-        html = html.replaceAll("juji123\\.com", PropUtil.LOCAL_NO_HTTP());
-        return html;
+        /*测试是否可以排除图片地址*/
+//        Document parse = Jsoup.parse(html);
+        Document parse = Jsoup.parse(replace(html));
+
+        for (Element a : parse.getElementsByTag("img")) {
+            String src = a.attr("src");
+            if (StringUtils.startsWith(src, "/")) {
+                a.attr("src", PropUtil.JUJI123_HTTP() + src);
+            }else {
+                String s = src.replaceAll(PropUtil.LOCAL_HTTP(), PropUtil.JUJI123_HTTP());
+                a.attr("src", s);
+            }
+        }
+//        for (Element a : parse.getElementsByTag("a")) {
+//            String href = a.attr("href");
+//            href = replace(href);
+//            a.attr("href", href);
+//        }
+//
+//        for (Element a : parse.getElementsByTag("script")) {
+//            String src = a.attr("src");
+//            if (StringUtils.isNotEmpty(src)) {
+//                src = replace(src);
+//                a.attr("src", src);
+//            }
+//        }
+//
+//        for (Element a : parse.getElementsByTag("link")) {
+//            String href = a.attr("href");
+//            href = replace(href);
+//            a.attr("href", href);
+//        }
+
+
+//        html = html.replaceAll("api\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
+//        html = html.replaceAll("meiju\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
+//        html = html.replaceAll("juji123\\.com", PropUtil.LOCAL_NO_HTTP());
+
+//        return replace(parse.html());
+        String html1 = parse.html();
+        return parse.html();
+    }
+
+    public static String replace(String content) {
+        content = content.replaceAll("m\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
+        content = content.replaceAll("api\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
+        content = content.replaceAll("meiju\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
+        content = content.replaceAll("juji123\\.com", PropUtil.LOCAL_NO_HTTP());
+        return content;
     }
 
     /**
