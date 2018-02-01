@@ -22,8 +22,6 @@ public class StringUtil {
      */
     public static String replaceHtml(String html) {
 
-        /*测试是否可以排除图片地址*/
-//        Document parse = Jsoup.parse(html);
         Document parse = Jsoup.parse(replace(html));
 
         for (Element a : parse.getElementsByTag("img")) {
@@ -31,37 +29,10 @@ public class StringUtil {
             if (StringUtils.startsWith(src, "/")) {
                 a.attr("src", PropUtil.JUJI123_HTTP() + src);
             }else {
-                String s = src.replaceAll(PropUtil.LOCAL_HTTP(), PropUtil.JUJI123_HTTP());
+                String s = src.replaceAll(PropUtil.LOCAL_HTTP(), PropUtil.JUJI123_HTTP()+"/");
                 a.attr("src", s);
             }
         }
-//        for (Element a : parse.getElementsByTag("a")) {
-//            String href = a.attr("href");
-//            href = replace(href);
-//            a.attr("href", href);
-//        }
-//
-//        for (Element a : parse.getElementsByTag("script")) {
-//            String src = a.attr("src");
-//            if (StringUtils.isNotEmpty(src)) {
-//                src = replace(src);
-//                a.attr("src", src);
-//            }
-//        }
-//
-//        for (Element a : parse.getElementsByTag("link")) {
-//            String href = a.attr("href");
-//            href = replace(href);
-//            a.attr("href", href);
-//        }
-
-
-//        html = html.replaceAll("api\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
-//        html = html.replaceAll("meiju\\.juji123\\.com", PropUtil.LOCAL_NO_HTTP());
-//        html = html.replaceAll("juji123\\.com", PropUtil.LOCAL_NO_HTTP());
-
-//        return replace(parse.html());
-        String html1 = parse.html();
         return parse.html();
     }
 
