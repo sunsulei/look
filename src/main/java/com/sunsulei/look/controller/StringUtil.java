@@ -33,6 +33,9 @@ public class StringUtil {
                 a.attr("src", s);
             }
         }
+        if(html.contains("<html")){
+            return parse.outerHtml();
+        }
         return parse.body().html();
     }
 
