@@ -33,7 +33,7 @@ public class StringUtil {
                 a.attr("src", s);
             }
         }
-        return parse.html();
+        return parse.outerHtml();
     }
 
     public static String replace(String content) {
