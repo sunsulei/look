@@ -71,7 +71,6 @@ public class StringUtil {
      * @throws IOException
      */
     public static byte[] url2bytes(String baseUri, String url) throws IOException {
-//        return url2String(baseUri, url).getBytes();
         return IOUtils.toByteArray(new URL(baseUri + url).openStream());
     }
 

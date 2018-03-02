@@ -7,6 +7,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,8 +22,8 @@ public class IndexController {
     public void play(HttpServletRequest request, HttpServletResponse response) {
         try {
             String path = request.getServletPath();
-            if(StringUtil.isStaticSource(path)){
-                controller(request,response);
+            if (StringUtil.isStaticSource(path)) {
+                controller(request, response);
                 return;
             }
             String html = StringUtil.url2String(PropUtil.JUJI123_HTTP(), path);
@@ -74,7 +76,7 @@ public class IndexController {
             if (StringUtil.isStaticSource(path)) {
                 //如果是静态资源，写字节数组返回前台
                 writeBytes(response, StringUtil.url2bytes(PropUtil.JUJI123_HTTP(), path));
-            }else {
+            } else {
                 //特殊的几个方法走的是二级域名
                 if (path.contains("searchsuggestion.php") || path.contains("portal.php")) {
                     String html = StringUtil.url2String(PropUtil.JUJI123_API(), path);
@@ -103,6 +105,11 @@ public class IndexController {
         }
     }
 
+    @RequestMapping(value = "api/vipUrls", method = RequestMethod.GET)
+    @ResponseBody
+    public Object vipUrls() {
+        return PropUtil.API_URL();
+    }
 
     /**
      * 返回字节数组给前台，一些静态资源走此方法
